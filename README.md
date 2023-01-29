@@ -52,6 +52,11 @@ WantedBy=multi-user.target
     * sudo systemctl start gunicorn.socket
     * sudo systemctl enable gunicorn.socket
 
+* Gunicorn socket has started but service has not started yet (Can be verified at "sudo systemctl status gunicorn.[socket/service]")
+
+* Trigger activation by sending a connection to the socket through curl:
+    * curl --unix-socket /run/gunicorn.sock localhost
+
 * Now we have to configure Nginx as a reverse proxy
 * Create a configuration file for Nginx using the following command
     * "sudo vim /etc/nginx/sites-available/ocrapp"
@@ -62,8 +67,13 @@ server {
         server_name http://10.17.10.9;
         location / {
         include proxy_params;
-            proxy_pass http://unix:/run/gunicorn.sock;
-        }   
+        proxy_pass http://unix:/run/gunicorn.sock;
+        proxy_connect_timeout       600;
+        proxy_send_timeout          600;
+        proxy_read_timeout          600;
+        send_timeout                600;
+        }
+
 }
 ```
 * Activate the configuration using the following command:
