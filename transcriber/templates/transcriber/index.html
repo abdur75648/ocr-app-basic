@@ -1,0 +1,163 @@
+<!doctype html>
+{% load static %}
+<html lang="en" style="background-size: cover; background: no-repeat center center fixed;min-height: 100%">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <meta name="generator" content="Hugo 0.88.1">
+  <title>Transcribe Urdu Text</title>
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'bootstrap.min.css'%}" rel="stylesheet">
+  <link href="{% static 'cover.css'%}" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+  </script>
+
+  <script type="text/javascript">
+    window.onload = function () {
+      $("#id_image").on("change", function (e) {
+        if (e.target.files.length > 0) {
+          var src = URL.createObjectURL(event.target.files[0]);
+          var preview = document.getElementById("file-ip-1-preview");
+          preview.src = src;
+          console.log(preview);
+        }
+      });
+    };
+
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+
+</head>
+
+<body class="d-flex text-center text-white stylish-body">
+  <div class="row" style="width: 200%;margin-top: 2%;">
+
+    <header class="mb-auto">
+
+
+      <div class="header-title" style="position: relative;left: 8%;">
+        <img src="{% static 'iitd_logo.png'%}" alt="logo" />
+        <h1 style="cursor: pointer">Urdu OCR</h1>
+        <h6>Indian Institute of Technology, Delhi</h6>
+      </div>
+      <h2 style="font-size: 2.3rem;margin-top: 5px;">Transcribe Image To Text</h2>
+    </header>
+
+    {% if predicted_label is None %}
+    <h4>Upload images of Urdu pages and convert them to text!</h4>
+    <p>Want to transcribe multiple images at once? <i> Upload a zip file containing (upto 10) images</i></p>
+
+    <form method="post" enctype="multipart/form-data" name="form1" style="margin-top: 10px; margin-bottom: 10px;">
+      {% csrf_token %}
+      {{ form }}
+      <button href="#" type="submit" id="btnUpload"
+        class="btn btn-glow1 btn-lg btn-secondary fw-bold border-white">Transcribe</button>
+    </form>
+    {% endif %}
+    <!-- <a href="#"  id="btnUpload" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Transcribe</a> -->
+
+    {% if Corrected_annotation != None %}
+    {% if Corrected_annotation == 1 %}
+    <p style="color: green;">Corrected annotation saved!</p>
+    {% else %}
+    <p style="color: red;">Corrected annotation NOT saved!</p>
+    {% endif %}
+    {% endif %}
+
+    {% if predicted_label is not None %}
+    <div role="alert" style="width: 60%;margin: auto;">
+
+      <a class="btn btn-glow1 btn-lg btn-secondary fw-bold border-white" href="{{ request.get_full_path }}">Transcribe
+        Another</a>
+      <br>
+
+      <div>
+
+        {% if is_image_not_zip %}
+        <div style="width: 40%; float:left">
+          <h3>Predicted Lines:</h3>
+          <img src="{% static 'vis_test.jpg'%}" class="img-fluid" alt="Uploaded Image"
+            style="max-width: 80%; height: 500px;">
+        </div>
+
+        <div style="width: 60%; float:right">
+          <h3>Predicted Text:</h3>
+
+          <textarea class="scrollabletextbox multiline" name="note" dir="rtl" lang="ar"
+            style="line-height: 2.0;"> {{ predicted_label }} </textarea>
+
+          <p> <span>
+              <a href="/download" style="text-decoration: none;"><button href="/download"
+                  class="btn btn-success fw-bold border-white" style="margin: auto auto;display:inline-block;">Download
+                  Transcription</button></a>
+            </span>
+          </p>
+
+          <form method="post" enctype="multipart/form-data" name="form2" style="margin-top: 10px; margin-bottom: 10px;">
+            {% csrf_token %}
+            {{ form2 }}
+            <p style="color: rgb(255, 255, 255);">The file's name MUST be "transcription.txt", as downloaded!</p>
+            <button type="submit" class="btn btn-success fw-bold border-white"
+              style="margin: auto auto;display:inline-block;">Upload Corrected </button>
+          </form>
+
+        </div>
+
+        {% else %}
+        <div style="margin-top: 5%; margin-bottom: 5%;">
+          <p> <span>
+              <a href="/download_zip" style="text-decoration: none;"><button href="/download_zip"
+                  class="btn btn-success fw-bold border-white" style="margin: auto auto;display:inline-block;">Download
+                  The Transcribed Zip</button></a>
+            </span>
+          </p>
+        </div>
+
+        {% for image,labels in all_labels %}
+
+        <div style="width: 40%; float:left">
+          <h3>Predicted Lines:</h3>
+
+          {% with ''|add:image as imagePath %}
+          <img src='{% static imagePath %}' class="img-fluid" style="max-width: 80%; height: 500px;">
+          {% endwith %}
+        </div>
+
+        <div style="width: 60%; float:right">
+          <h3>Predicted Text:</h3>
+          <textarea class="scrollabletextbox2 multiline" name="note" dir="rtl" lang="ar"
+            style="line-height: 2.0;"> {{ labels }} </textarea>
+        </div>
+        {% endfor %}
+
+
+      </div>
+    </div>
+    <br>
+    <div class="container">
+      <form method="post" enctype="multipart/form-data" name="form2" style="margin-top: 10px; margin-bottom: 10px;">
+        {% csrf_token %}
+        {{ form2 }}
+        <p style="color: rgb(255, 255, 255);">The zip file's name MUST be "predictions.zip", as downloaded!</p>
+        <button type="submit" class="btn btn-success fw-bold border-white"
+          style="margin: auto auto;display:inline-block;">Upload Corrected </button>
+      </form>
+    </div>
+
+    {% endif %}
+
+    {% endif %}
+
+
+</body>
+
+</html>

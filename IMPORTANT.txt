@@ -1,0 +1,47 @@
+-> Test
+CUDA_VISIBLE_DEVICES=0 python test.py
+
+-> Train
+CUDA_VISIBLE_DEVICES=0 python train.py
+
+maskrcnn-benchmark SETUP:
+conda create --name cn -y
+conda activate cn
+conda install ipython pip
+pip install ninja yacs cython matplotlib lmdb natsort tqdm opencv-python scipy pandas pycocotools shapely networkx
+pip install ninja yacs cython matplotlib tqdm scipy shapely networkx pandas Polygon3 whitenoise
+conda install -c pytorch torchvision cudatoolkit=9.0
+pip install torchvision==0.2.1
+pip install django django-lockdown
+pip install django-allauth
+export INSTALL_DIR=$PWD
+cd $INSTALL_DIR
+git clone https://github.com/cocodataset/cocoapi.git
+cd cocoapi/PythonAPI
+python setup.py build_ext install
+cd $INSTALL_DIR
+git clone https://github.com/mcordts/cityscapesScripts.git
+cd cityscapesScripts
+python setup.py build_ext install
+cd $INSTALL_DIR
+git clone https://github.com/NVIDIA/apex.git
+cd apex
+export TORCH_CUDA_ARCH_LIST="compute capability"
+python setup.py install --cpp_ext
+cd $INSTALL_DIR
+git clone https://github.com/facebookresearch/maskrcnn-benchmark.git
+cd maskrcnn-benchmark
+python setup.py build develop
+unset INSTALL_DIR
+
+ContourNet SETUP:
+Move these 2 from new maskrcnn to webapp maskrcnn-> _C.cpython-39-x86_64-linux-gnu.so & csrc
+conda activate cn
+
+Code Running
+Chnage line 28 inference.py -> torch.cuda.synchronize() to synchronize()
+Change m_b/utils/imports.py -> if torch._six.PY37 to if torch._six.PY37
+Change line 32 in default.py -> GPU to CPU
+Change line 402 & 417 strcutures/segmentation_mask.py -> torch.uint8 to torch.bool
+Use original m_b/utils/checkpoints.py if using ContourNet for evaluation
+Change line 351 & 361 in word_eval.py _, countours, hier to countours, hier

@@ -1,0 +1,12 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign Up Closed" %}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Sign Up Closed" %}</h1>
+
+<p style="color: red;">{% trans "You're NOT a registered user." %}</p>
+<p>{% trans "The sign up is currently closed. Please contact the administrator" %}</p>
+{% endblock %}

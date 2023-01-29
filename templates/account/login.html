@@ -1,0 +1,32 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% load crispy_forms_filters %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+  <div class="text-center">
+    <h1>{% trans "Sign In" %}</h1>
+
+    {% if user.is_authenticated %}
+    <p>You're already logged in! <span>
+    <a href="{% url 'logout' %}"><button href="{% url 'logout' %}"
+      class="btn btn-sm btn-secondary fw-bold border-white"
+      style="margin: auto auto;display:inline-block;"
+      >Log Out</button></a>
+    </span>
+  </p>
+    {% else %}
+
+
+    <p>Login to start using the app! </p>
+      <a href="{% provider_login_url 'google' %}"><button href="{% provider_login_url 'google' %}"
+        class="btn btn-sm btn-secondary fw-bold border-white"
+        style="margin: auto auto;display:inline-block;" >Login With Google</button></a>
+  {% endif %}    
+  </div>
+{% endblock %}

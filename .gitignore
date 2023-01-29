@@ -1,0 +1,10 @@
+vis/*
+img/*
+batch_corrections/*
+corrections/*
+transcriber/best_norm_ED.pth
+transcriber/new_norm_ED.pth
+contourNet_model.pth
+_C*
+maskrcnn_benchmark/_C*
+client_secret*
