@@ -8,3 +8,4 @@ contourNet_model.pth
 _C*
 maskrcnn_benchmark/_C*
 client_secret*
+static/vis_test.jpg

@@ -107,11 +107,19 @@ def detect_boxes():
         max_y = max(points[1::2])
         im_cropped = image.crop((int(min_x), int(min_y), int(max_x), int(max_y)))
         im_cropped.save(f"vis/{str(num_box+1).zfill(3)}_test.jpg")
-
-    for points in bboxes:
-        points = points+[points[0]]+[points[1]]
-        points = tuple([int(i) for i in points])
-        draw.line((points),fill="green", width=7)
+        import random
+        import cv2
+        import numpy as np
+        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        image = cv2.rectangle(np.array(image), (min_x, min_y), (max_x, max_y), color, 3)
+        image = Image.fromarray(image)
+    # for points in bboxes:
+    #     points = points+[points[0]]+[points[1]]
+    #     points = tuple([int(i) for i in points])
+    #     draw.line((points),fill="green", width=7)
+    #     import random
+    #     color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    #     image = cv2.rectangle(image, (w[0], w[1]), (w[2], w[3]), color, 3)
     image.save(f"static/vis_test.jpg")
 
     if os.path.exists("maskrcnn_benchmark/engine/test.json"):

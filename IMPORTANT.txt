@@ -45,3 +45,14 @@ Change line 32 in default.py -> GPU to CPU
 Change line 402 & 417 strcutures/segmentation_mask.py -> torch.uint8 to torch.bool
 Use original m_b/utils/checkpoints.py if using ContourNet for evaluation
 Change line 351 & 361 in word_eval.py _, countours, hier to countours, hier
+
+sudo rm /etc/nginx/sites-enabled/*
+sudo vim /etc/nginx/sites-available/ocrapp
+sudo ln -s /etc/nginx/sites-available/ocrapp /etc/nginx/sites-enabled/
+sudo systemctl daemon-reload
+sudo systemctl start gunicorn
+sudo systemctl restart gunicorn
+sudo systemctl enable gunicorn
+sudo systemctl status gunicorn.service
+sudo systemctl restart nginxx
+service nginx reload
